@@ -30,6 +30,9 @@
                 case 7:
                     Task7();
                     break;
+                case 8:
+                    Task8();
+                    break;
             }
 
         }
@@ -151,15 +154,16 @@
             int num;
             Console.WriteLine("Enter a number:");
             num = Convert.ToInt32(Console.ReadLine());
-            int first = 0, second = 1;
+            int first = 0, second = 1, temp=0;
             Console.WriteLine("first N numbers of the Fibonacci series:");
-            Console.Write(first);
-            first = second;
-            second = first + second;
-            Console.Write(second);
+            Console.Write(first + ", ");
+            Console.Write(second + ", ");            
             for (int i = 2; i < num; i++)
             {
-
+                Console.Write((first+second) + ", ");
+                temp = first;
+                first = second;
+                second = temp + second;
             }
         }
     }
