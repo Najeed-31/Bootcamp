@@ -1,0 +1,14 @@
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\bin\Debug\net8.0\Assignment-01.exe
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\bin\Debug\net8.0\Assignment-01.deps.json
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\bin\Debug\net8.0\Assignment-01.runtimeconfig.json
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\bin\Debug\net8.0\Assignment-01.dll
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\bin\Debug\net8.0\Assignment-01.pdb
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\Assignment-01.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\Assignment-01.AssemblyInfoInputs.cache
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\Assignment-01.AssemblyInfo.cs
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\Assignment-01.csproj.CoreCompileInputs.cache
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\Assignment-01.dll
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\refint\Assignment-01.dll
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\Assignment-01.pdb
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\Assignment-01.genruntimeconfig.cache
+C:\Users\6611\source\repos\najeed-mubasher-6611\Assignment-01\Assignment-01\obj\Debug\net8.0\ref\Assignment-01.dll
