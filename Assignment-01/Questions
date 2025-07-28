@@ -1,0 +1,60 @@
+1. Multiplication Table Generator
+Input a number and print its multiplication table up to 10 using loops.
+2. Even or Odd Checker
+Ask the user for a number and tell if it's even or odd.
+3. Maximum of Three Numbers
+Take 3 numbers as input and print the largest.
+4. Sum of First N Numbers
+Take N as input and print sum from 1 to N.
+5. Reverse a Number
+Input a number (e.g. 1234 → 4321) using loops.
+6. Factorial Calculator
+Compute factorial of a given number using a loop.
+7. Leap Year Validator
+Ask the user for a year and check if it’s a leap year.
+8. Fibonacci Series Printer
+Print first N terms of Fibonacci series.
+9. Prime Number Checker
+Determine whether a number is prime.
+10. GCD Finder
+Find the Greatest Common Divisor (GCD) of two numbers.
+11. Simple Calculator
+Input two numbers and perform +, -, *, /, %, based on user choice using switch case.
+12. Digit Counter
+Count how many digits are in a given number.
+13. Palindrome Number
+Check if a number reads the same forward and backward.
+14. Sum of Digits
+Input a number and calculate sum of all its digits.
+15. Armstrong Number Validator
+Check whether a 3-digit number is an Armstrong number.
+16. Find Max & Min in Array
+Input an integer array and find the largest and smallest values.
+17. Linear Search
+Search a number in an array using linear search.
+18. Array Sort (Ascending)
+Sort and print an integer array.
+19. Even/Odd Counter in Array
+Count how many even and odd numbers exist in the array.
+20. Sort List of Names Alphabetically
+Use List<string> and Sort() to sort names.
+21. Frequency Counter (Array)
+Count how many times each number appears using a dictionary.
+22. Matrix Addition
+Input two matrices and print their sum.
+23. Vowel Counter in String
+Count the number of vowels in a user-entered sentence.
+24. String Palindrome
+Check if a string is a palindrome.
+25. Reverse Words in a Sentence
+Reverse only words, not letters. E.g., 'Hello World' → 'World Hello'.
+26. Remove Duplicates from Array
+Return a list of unique values using HashSet.
+27. Student Marks Manager
+Add/search/update marks using Dictionary<string, int>.
+28. Patient Visit Console App
+Add, search, update, and delete patient visits using a list of objects.
+29. Word Frequency Counter
+Input a paragraph and print how many times each word appears.
+30. Random Password Generator
+Input desired length and generate an alphanumeric password.
