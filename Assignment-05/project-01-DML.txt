@@ -1,0 +1,71 @@
+--Najeed Mubasher 9/10/2025 DML commands to populate the tables with sample data. Select * commands afte each insertion to check how the table looks after being populated with the sample data.
+
+insert into Patients (FullName) 
+values
+('Najeed Mubasher'),
+('Shahmeer Ali'),
+('Bukhari Ahmed');
+
+select * from patients;
+
+insert into Doctors (FullName) 
+values
+('Dr. Kashif'),
+('Dr. Anam');
+
+select * from Doctors;
+
+insert into VisitTypes (TypeName) 
+values
+('Consultation'),
+('Follow-up'),
+('Emergency');
+
+select * from VisitTypes;
+
+insert into FeeSchedule (VisitTypeID, RatePerMinute)
+values
+(1, 500), 
+(2, 300),
+(3, 1000);
+
+select * from FeeSchedule;
+
+
+insert into Visits (PatientID, DoctorID, VisitTypeID, VisitDate, Description, DurationMinutes, Fee) 
+values
+(1, 1, 1, '2025-07-20 10:30', 'Acidity due to unhealthy diet.', 30, 15000),
+(2, 2, 3, '2025-07-21 14:00', 'Change in weather prompted flu. Medicine prescribed.', 20, 20000),
+(3, 1, 2, '2025-07-22 09:15', 'Excessive screen time led to migraine.', 15, 4500);
+
+select * from Visits;
+
+insert into Roles (RoleName)
+values
+('Administrator'),
+('Receptionist');
+
+select * from Roles;
+
+
+insert into Users (RoleID, Username, PasswordHash)
+values
+(1, 'admin_user', 'admin123'),
+(2, 'reception_user', 'recept123');
+
+select * from Users;
+
+
+insert into VisitHistory (Action, PatientID, VisitDate, VisitTypeID, Description, DoctorID) 
+values
+('Add', 1, '2025-07-20 10:30', 1, 'Acidity due to unhealthy diet.', 1),
+('Add', 2, '2025-07-21 14:00', 3, 'Change in weather prompted flu. Medicine prescribed.', 2),
+('Add', 3, '2025-07-22 09:15', 2, 'Excessive screen time led to migraine.', 1),
+('Update', 1, '2025-07-23 11:00', 1, 'Updated notes for acidity treatment.', 1),
+('Delete', 2, '2025-07-25 16:00', 3, 'Deleted visit due to incorrect entry.', 2);
+
+select * from VisitHistory;
+
+
+
+

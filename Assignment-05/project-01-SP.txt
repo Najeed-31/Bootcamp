@@ -1,0 +1,594 @@
+--Najeed Mubasher 9/10/2025 Stored Procedures creation and usage. Sample executions are mentioned that will return true data or erronous prompts.
+
+--add sp
+GO 
+create PROCEDURE stp_AddVisit
+    @PatientName varchar(100),
+    @VisitTypeName varchar(50),
+    @DoctorName varchar(100),
+    @Description varchar(MAX),
+    @DurationMinutes int
+as
+begin
+    
+
+    declare @PatientID int, @DoctorID int, @VisitTypeID int;
+    declare @RatePerMinute decimal(10,2), @Fee decimal(10,2);
+    declare @VisitDate datetime = getdate();
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        
+        select @PatientID = PatientID 
+        from Patients 
+        where FullName = @PatientName;
+
+        if @PatientID is null
+        BEGIN
+            insert into Patients (FullName)
+            values 
+            (@PatientName);
+            set @PatientID = SCOPE_IDENTITY();
+          
+        END
+
+        
+        select @DoctorID = DoctorID
+        from Doctors
+        where FullName = @DoctorName;
+
+        if @DoctorID is null
+        BEGIN
+            insert into Doctors (FullName)
+            values
+            (@DoctorName);
+            SET @DoctorID = SCOPE_IDENTITY();
+            
+        END
+
+        select @VisitTypeID = VisitTypeID
+        from VisitTypes
+        where TypeName = @VisitTypeName;
+
+        if @VisitTypeID is null
+        BEGIN
+            RAISERROR('Invalid Visit Type.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        select @RatePerMinute = RatePerMinute
+        from FeeSchedule
+        where VisitTypeID = @VisitTypeID;
+
+        set @Fee = @RatePerMinute * @DurationMinutes;
+
+        insert into Visits 
+        (
+            PatientID, DoctorID, VisitTypeID, VisitDate, Description, DurationMinutes, Fee
+        )
+        values 
+        (
+            @PatientID, @DoctorID, @VisitTypeID, @VisitDate, @Description, @DurationMinutes, @Fee
+        );
+
+        insert into VisitHistory 
+        (
+            Action, PatientID, VisitDate, VisitTypeID, Description, DoctorID
+        )
+        values 
+        (
+            'Add', @PatientID, @VisitDate, @VisitTypeID, @Description, @DoctorID
+        );
+
+        COMMIT TRANSACTION;
+        PRINT 'Visit added successfully.';
+
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
+-- 1. Adding a Consultation visit for an existing patient & doctor
+EXEC stp_AddVisit
+    @PatientName = 'Najeed Mubasher',
+    @VisitTypeName = 'Consultation',
+    @DoctorName = 'Dr. Kashif',
+    @Description = 'Routine check-up and follow-up on acidity treatment.',
+    @DurationMinutes = 25;
+
+-- 2. Adding an Emergency visit for a new patient and existing doctor
+EXEC stp_AddVisit
+    @PatientName = 'Ahmed Khan',
+    @VisitTypeName = 'Emergency',
+    @DoctorName = 'Dr. Anam',
+    @Description = 'Severe chest pain and shortness of breath.',
+    @DurationMinutes = 40;
+
+-- 3. Adding a Follow-up visit for an existing patient but a new doctor
+EXEC stp_AddVisit
+    @PatientName = 'Bukhari Ahmed',
+    @VisitTypeName = 'Follow-up',
+    @DoctorName = 'Dr. Sarah',
+    @Description = 'Checking recovery from migraine treatment.',
+    @DurationMinutes = 15;
+
+
+
+
+
+--update sp
+GO 
+create PROCEDURE stp_UpdateVisit
+    @PatientName varchar(100),
+    @VisitTypeName varchar(50),
+    @DoctorName varchar(100),
+    @Description varchar(MAX),
+    @DurationMinutes int
+AS
+BEGIN
+
+    declare @PatientID int, @DoctorID int, @VisitTypeID int, @VisitID int;
+    declare @RatePerMinute decimal(10,2), @Fee decimal(10,2);
+    declare @VisitDate datetime = getdate();
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        select @PatientID = PatientID 
+        from Patients
+        where FullName = @PatientName;
+
+        if @PatientID is null
+        BEGIN
+            RAISERROR('Patient does not exist.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        select @VisitID = VisitID
+        from Visits
+        where PatientID = @PatientID;
+
+        if @VisitID is null
+        BEGIN
+            RAISERROR('Visit does not exist for the given patient.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        select @DoctorID = DoctorID
+        from Doctors
+        where FullName = @DoctorName;
+
+        if @DoctorID is null
+        BEGIN
+            insert into Doctors (FullName)
+            values 
+            (@DoctorName);
+
+            set @DoctorID = SCOPE_IDENTITY();
+        END
+
+        select @VisitTypeID = VisitTypeID
+        from VisitTypes
+        where TypeName = @VisitTypeName;
+
+        if @VisitTypeID is null
+        BEGIN
+            RAISERROR('Invalid Visit Type.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        select @RatePerMinute = RatePerMinute
+        from FeeSchedule
+        where VisitTypeID = @VisitTypeID;
+
+        set @Fee = @RatePerMinute * @DurationMinutes;
+
+        update Visits
+        set DoctorID = @DoctorID,
+            VisitTypeID = @VisitTypeID,
+            VisitDate = @VisitDate,
+            Description = @Description,
+            DurationMinutes = @DurationMinutes,
+            Fee = @Fee
+        where VisitID = @VisitID;
+
+        INSERT INTO VisitHistory 
+        (
+            Action, PatientID, VisitDate, VisitTypeID, Description, DoctorID
+        )
+        VALUES 
+        (
+            'Update', @PatientID, @VisitDate, @VisitTypeID, @Description, @DoctorID
+        );
+
+        COMMIT TRANSACTION;
+        PRINT 'Visit updated successfully.';
+
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END
+GO
+-- 1. Update an existing visit for Najeed Mubasher
+EXEC stp_UpdateVisit
+    @PatientName = 'Najeed Mubasher',
+    @VisitTypeName = 'Consultation',
+    @DoctorName = 'Dr. Kashif',
+    @Description = 'Updated check-up details for acidity treatment.',
+    @DurationMinutes = 40;
+
+-- 2. Update an existing visit for Bukhari Ahmed and change to Consultation
+EXEC stp_UpdateVisit
+    @PatientName = 'Bukhari Ahmed',
+    @VisitTypeName = 'Consultation',
+    @DoctorName = 'Dr. Sarah',
+    @Description = 'Migraines have improved, final consultation done.',
+    @DurationMinutes = 20;
+
+-- 3. Try updating a patient who has no visit (will show error)
+EXEC stp_UpdateVisit
+    @PatientName = 'Non Existing Patient',
+    @VisitTypeName = 'Follow-up',
+    @DoctorName = 'Dr. Anam',
+    @Description = 'This should fail since no visit exists.',
+    @DurationMinutes = 15;
+
+
+
+
+--delete sp
+GO 
+create PROCEDURE stp_DeleteVisit
+    @PatientName varchar(100),
+    @VisitTypeName varchar(50),
+    @DoctorName varchar(100),
+    @DurationMinutes int
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @PatientID int, @DoctorID int, @VisitTypeID int, @VisitID int;
+    DECLARE @VisitDate datetime = getdate();
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        select @PatientID = PatientID
+        from Patients
+        where FullName = @PatientName;
+
+        if @PatientID is null
+        BEGIN
+            RAISERROR('Patient does not exist.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        select @VisitTypeID = VisitTypeID
+        from VisitTypes
+        where TypeName = @VisitTypeName;
+
+        if @VisitTypeID is null
+        BEGIN
+            RAISERROR('Invalid Visit Type.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        select @DoctorID = DoctorID
+        from Doctors
+        where FullName = @DoctorName;
+
+        if @DoctorID is null
+        BEGIN
+            RAISERROR('Doctor does not exist.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        select top 1 @VisitID = VisitID, @VisitDate = VisitDate
+        from Visits
+        where PatientID = @PatientID and VisitTypeID = @VisitTypeID and DoctorID = @DoctorID and DurationMinutes = @DurationMinutes;
+
+        if @VisitID is null
+        BEGIN
+            RAISERROR('Visit does not exist for the given details.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        delete from Visits
+        where VisitID = @VisitID;
+
+        insert into VisitHistory 
+        (
+            Action, PatientID, VisitDate, VisitTypeID, Description, DoctorID
+        )
+        VALUES 
+        (
+            'Delete', @PatientID, @VisitDate, @VisitTypeID, 
+            'Visit deleted from system.', @DoctorID
+        );
+
+        COMMIT TRANSACTION;
+        PRINT 'Visit deleted successfully.';
+
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END
+GO
+-- 1. Delete an existing Consultation visit for Najeed Mubasher
+EXEC stp_DeleteVisit
+    @PatientName = 'Najeed Mubasher',
+    @VisitTypeName = 'Consultation',
+    @DoctorName = 'Dr. Kashif',
+    @DurationMinutes = 30;  
+-- 2. Attempt to delete a visit that doesn't exist
+EXEC stp_DeleteVisit
+    @PatientName = 'Non Existing Patient',
+    @VisitTypeName = 'Emergency',
+    @DoctorName = 'Dr. Anam',
+    @DurationMinutes = 20;
+-- This should trigger the RAISERROR and roll back with the message:
+-- "Patient does not exist."
+
+
+
+
+
+--search by patient sp
+GO 
+create PROCEDURE stp_SearchByPatient
+    @PatientName varchar(100)
+as
+BEGIN
+
+    declare @PatientID int;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        select @PatientID = PatientID
+        from Patients
+        where FullName = @PatientName;
+
+        if @PatientID is null
+        BEGIN
+            RAISERROR('Patient does not exist.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        if not exists (
+            select 1
+            from Visits
+            where PatientID = @PatientID
+        )
+        BEGIN
+            RAISERROR('No visits found for this patient.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        SELECT 
+            v.VisitID,
+            p.FullName as PatientName,
+            d.FullName as DoctorName,
+            vt.TypeName as VisitType,
+            v.VisitDate,
+            v.Description,
+            v.DurationMinutes,
+            v.Fee
+        from Visits v
+        inner join Patients p on v.PatientID = p.PatientID
+        inner join Doctors d on v.DoctorID = d.DoctorID
+        inner join VisitTypes vt on v.VisitTypeID = vt.VisitTypeID
+        where v.PatientID = @PatientID;
+
+        insert into VisitHistory
+        (
+            Action, PatientID, VisitDate, VisitTypeID, Description, DoctorID
+        )
+        select 
+            'Search By Patient',
+            v.PatientID,
+            v.VisitDate,
+            v.VisitTypeID,
+            v.Description,
+            v.DoctorID
+        from Visits v
+        where v.PatientID = @PatientID;
+
+        COMMIT TRANSACTION;
+        PRINT 'Search completed successfully.';
+
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END
+GO
+-- sample
+EXEC stp_SearchByPatient
+    @PatientName = 'Najeed Mubasher';
+
+
+
+
+
+
+
+--search by doctor sp
+GO 
+create PROCEDURE stp_SearchByDoctor
+    @DoctorName varchar(100)
+as
+BEGIN
+
+    declare @DoctorID int;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        select @DoctorID = DoctorID
+        from Doctors
+        where FullName = @DoctorName;
+
+        if @DoctorID is null
+        BEGIN
+            RAISERROR('Doctor does not exist.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+        
+        if not exists (
+            select 1
+            from Visits
+            where DoctorID = @DoctorID
+        )
+        BEGIN
+            RAISERROR('No visits found for this doctor.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        select 
+            v.VisitID,
+            p.FullName as PatientName,
+            d.FullName as DoctorName,
+            vt.TypeName as VisitType,
+            v.VisitDate,
+            v.Description,
+            v.DurationMinutes,
+            v.Fee
+        from Visits v
+        inner join Patients p on v.PatientID = p.PatientID
+        inner join Doctors d on v.DoctorID = d.DoctorID
+        inner join VisitTypes vt on v.VisitTypeID = vt.VisitTypeID
+        where v.DoctorID = @DoctorID;
+
+        insert into VisitHistory (
+            Action, PatientID, VisitDate, VisitTypeID, Description, DoctorID
+        )
+        select 
+            'Search By Doctor',
+            v.PatientID,
+            v.VisitDate,
+            v.VisitTypeID,
+            v.Description,
+            v.DoctorID
+        from Visits v
+        where v.DoctorID = @DoctorID;
+
+        COMMIT TRANSACTION;
+        PRINT 'Search completed successfully.';
+
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
+--sample
+EXEC stp_SearchByDoctor
+    @DoctorName = 'Dr. Kashif';
+
+
+
+
+
+
+
+--search by type sp
+GO 
+create PROCEDURE stp_SearchByVisitType
+    @VisitTypeName varchar(50)
+as
+BEGIN
+
+    declare @VisitTypeID int;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        select @VisitTypeID = VisitTypeID
+        from VisitTypes
+        where TypeName = @VisitTypeName;
+
+        if @VisitTypeID is null
+        BEGIN
+            RAISERROR('Visit type does not exist.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        if not exists (
+            select 1
+            from Visits
+            where VisitTypeID = @VisitTypeID
+        )
+        BEGIN
+            RAISERROR('No visits found for this visit type.', 16, 1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+
+        select 
+            v.VisitID,
+            p.FullName as PatientName,
+            d.FullName as DoctorName,
+            vt.TypeName as VisitType,
+            v.VisitDate,
+            v.Description,
+            v.DurationMinutes,
+            v.Fee
+        from Visits v
+        inner join Patients p on v.PatientID = p.PatientID
+        inner join Doctors d on v.DoctorID = d.DoctorID
+        inner join VisitTypes vt on v.VisitTypeID = vt.VisitTypeID
+        where v.VisitTypeID = @VisitTypeID;
+
+        insert into VisitHistory (
+            Action, PatientID, VisitDate, VisitTypeID, Description, DoctorID
+        )
+        select 
+            'Search By Visit Type',
+            v.PatientID,
+            v.VisitDate,
+            v.VisitTypeID,
+            v.Description,
+            v.DoctorID
+        from Visits v
+        where v.VisitTypeID = @VisitTypeID;
+
+        COMMIT TRANSACTION;
+        PRINT 'Search by visit type completed successfully.';
+
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT ERROR_MESSAGE();
+    END CATCH
+END
+GO
+
+--sample
+EXEC stp_SearchByVisitType
+    @VisitTypeName = 'Emergency';
+

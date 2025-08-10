@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do List</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .done { text-decoration: line-through; color: gray; }
+        button { margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <input id="newTask" placeholder="New task">
+    <button onclick="addTask()">Add</button>
+    <br><br>
+    <button onclick="setFilter('all')">All</button>
+    <button onclick="setFilter('active')">Active</button>
+    <button onclick="setFilter('done')">Done</button>
+    <ul id="taskList"></ul>
+
+    <script>
+        let tasks = [];
+        let filter = 'all';
+
+        function addTask() {
+            const text = document.getElementById("newTask").value.trim();
+            if (text) {
+                tasks.push({ text: text, done: false });
+                document.getElementById("newTask").value = "";
+                render();
+            }
+        }
+
+        function toggleTask(index) {
+            tasks[index].done = !tasks[index].done;
+            render();
+        }
+
+        function setFilter(f) {
+            filter = f;
+            render();
+        }
+
+        function render() {
+            const list = document.getElementById("taskList");
+            list.innerHTML = "";
+            tasks
+                .filter(t => filter === 'all' || (filter === 'active' && !t.done) || (filter === 'done' && t.done))
+                .forEach((task, i) => {
+                    const li = document.createElement("li");
+                    li.textContent = task.text;
+                    li.className = task.done ? "done" : "";
+                    li.onclick = () => toggleTask(i);
+                    list.appendChild(li);
+                });
+        }
+    </script>
+</body>
+</html>

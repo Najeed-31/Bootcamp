@@ -1,0 +1,64 @@
+--Najeed Mubasher 9/10/2025 DDL commands for creation of all the tables and establishing their relationships as mentioned in the ERD
+
+create table Patients (
+PatientID int primary key identity(1,1),
+FullName varchar(100) not null
+);
+
+create table Doctors (
+DoctorID int primary key identity(1,1),
+FullName varchar(100) not null
+);
+
+create table VisitTypes(
+VisitTypeID int primary key identity(1,1),
+TypeName varchar(50)not null unique
+);
+
+create table FeeSchedule (
+FeeID int primary key identity(1,1),
+VisitTypeID int not null,
+RatePerMinute decimal(10,2) not null,
+foreign key(VisitTypeID) references VisitTypes(VisitTypeID)
+);
+
+CREATE TABLE Visits (
+VisitID int primary key identity(1,1),
+PatientID int not null,
+DoctorID int not null,
+VisitTypeID int not null,
+VisitDate datetime not null,
+Description varchar(200),
+DurationMinutes int not null,
+Fee decimal(10,2) not null,
+foreign key(PatientID) references Patients(PatientID),
+foreign key(DoctorID) references Doctors(DoctorID),
+foreign key(VisitTypeID) references VisitTypes(VisitTypeID)
+);
+
+create table Roles (
+RoleID int primary key identity(1,1),
+RoleName varchar(50) not null unique
+);
+
+
+create table Users (
+UserID int primary key identity(1,1),
+RoleID int not null,
+Username varchar(50) not null unique,
+PasswordHash varchar(255) not null,
+foreign key(RoleID) references Roles(RoleID)
+);
+
+create table VisitHistory (
+HistoryID int primary key identity(1,1),
+Action varchar(7)not null,
+PatientID int not null,
+VisitDate datetime not null,
+VisitTypeID int not null,
+Description varchar(200),
+DoctorID int not null,
+foreign key(PatientID) references Patients(PatientID),
+foreign key(DoctorID) references Doctors(DoctorID),
+foreign key(VisitTypeID) references VisitTypes(VisitTypeID)
+);
