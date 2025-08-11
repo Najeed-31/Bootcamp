@@ -1,0 +1,128 @@
+using System;
+using System.Collections.Generic;
+
+// ===== DOMAIN MODELS =====
+public class Order
+{
+    public int Id { get; set; }
+    public string PaymentType { get; set; }
+    public decimal Amount { get; set; }
+}
+
+// ===== INTERFACES =====
+public interface IPaymentProcessor
+{
+    void ProcessPayment(Order order);
+}
+
+public interface IOrderRepository
+{
+    Order GetOrder(int orderId);
+}
+
+public interface ILogger
+{
+    void Log(string message);
+}
+
+// ===== PAYMENT PROCESSORS =====
+public class CreditCardPaymentProcessor : IPaymentProcessor
+{
+    public void ProcessPayment(Order order)
+    {
+        Console.WriteLine($"Processing Credit Card payment of ${order.Amount} for Order #{order.Id}");
+    }
+}
+
+public class PayPalPaymentProcessor : IPaymentProcessor
+{
+    public void ProcessPayment(Order order)
+    {
+        Console.WriteLine($"Processing PayPal payment of ${order.Amount} for Order #{order.Id}");
+    }
+}
+
+// ===== SUPPORTING CLASSES =====
+public class InMemoryOrderRepository : IOrderRepository
+{
+    private readonly Dictionary<int, Order> _orders = new Dictionary<int, Order>
+    {
+        { 1, new Order { Id = 1, PaymentType = "CreditCard", Amount = 150.75m } },
+        { 2, new Order { Id = 2, PaymentType = "PayPal", Amount = 89.99m } },
+        { 3, new Order { Id = 3, PaymentType = "Crypto", Amount = 250.00m } } // Unknown type for testing
+    };
+
+    public Order GetOrder(int orderId)
+    {
+        return _orders.ContainsKey(orderId) ? _orders[orderId] : null;
+    }
+}
+
+public class ConsoleLogger : ILogger
+{
+    public void Log(string message)
+    {
+        Console.WriteLine($"[LOG] {message}");
+    }
+}
+
+// ===== COORDINATOR =====
+public class OrderProcedure
+{
+    private readonly IOrderRepository _orderRepository;
+    private readonly ILogger _logger;
+    private readonly Dictionary<string, IPaymentProcessor> _paymentProcessors;
+
+    public OrderProcedure(IOrderRepository orderRepository, ILogger logger, Dictionary<string, IPaymentProcessor> paymentProcessors)
+    {
+        _orderRepository = orderRepository;
+        _logger = logger;
+        _paymentProcessors = paymentProcessors;
+    }
+
+    public void ProcessOrder(int orderId)
+    {
+        var order = _orderRepository.GetOrder(orderId);
+
+        if (order == null)
+        {
+            _logger.Log("Order not found.");
+            return;
+        }
+
+        if (_paymentProcessors.TryGetValue(order.PaymentType, out var processor))
+        {
+            processor.ProcessPayment(order);
+            _logger.Log("Order processed");
+        }
+        else
+        {
+            _logger.Log("Unknown payment type");
+        }
+    }
+}
+
+// ===== PROGRAM ENTRY POINT =====
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        // Setup dependencies
+        var orderRepository = new InMemoryOrderRepository();
+        var logger = new ConsoleLogger();
+
+        var paymentProcessors = new Dictionary<string, IPaymentProcessor>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "CreditCard", new CreditCardPaymentProcessor() },
+            { "PayPal", new PayPalPaymentProcessor() }
+        };
+
+        var orderProcedure = new OrderProcedure(orderRepository, logger, paymentProcessors);
+
+        // Simulate processing orders
+        orderProcedure.ProcessOrder(1); // CreditCard
+        orderProcedure.ProcessOrder(2); // PayPal
+        orderProcedure.ProcessOrder(3); // Unknown type
+        orderProcedure.ProcessOrder(99); // Order not found
+    }
+}
