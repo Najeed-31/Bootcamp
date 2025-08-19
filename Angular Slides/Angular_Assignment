@@ -1,0 +1,41 @@
+*Assignment: Contact Card Dashboard
+Overview*
+Build a two-panel Contact Card Dashboard to practice Angular @Input, @Output, event/property binding, and lifecycle hooks—without any typed inputs.
+Layout
+	•	Left Panel (Listing)
+	◦	A row of filter buttons: All, Favourites, Family, Friends, Classmates.
+	◦	A contact list showing cards for the currently active filter.
+	•	Right Panel (Details)
+	◦	Shows the selected contact’s full details.
+Data & Mock Content
+	•	Create 50 mock contacts.
+	•	Each contact must include:
+	◦	id, name, phone, email, gender, address
+	◦	groups: string[] where a contact can be in multiple groups (any of: Favourites, Family, Friends, Classmates).
+Behaviour
+	•	Clicking a filter button updates the left list to show only contacts in that group
+(use All to show everything).
+	•	Clicking a contact in the left list selects it and displays its details in the right panel.
+	•	The right panel must include group toggle buttons for:
+	◦	Mark as Favourite / Unfavourite
+	◦	Add/Remove from Family
+	◦	Add/Remove from Friends
+	◦	Add/Remove from Classmates
+	•	State changes are immediate:
+	◦	If a contact is marked as Favourite, it must instantly appear when the Favourites filter is active.
+	◦	The same applies when adding/removing the contact from Family, Friends, or Classmates while those filters are active.
+Technical Requirements
+	•	No text inputs or forms—only buttons/toggles and click events.
+	•	State up, data down:
+	◦	The parent component owns the source of truth: contacts list, selected contact, and current filter.
+	◦	Children receive data via @Input and communicate changes via @Output.
+	•	Use event binding for clicks and property binding for visual states (e.g., active filter button, favourite badge).
+	•	Demonstrate lifecycle hooks
+Acceptance Criteria
+	1.	Left panel shows filter buttons and a list that updates correctly for All/Favourites/Family/Friends/Classmates.
+	2.	50 contacts are present with a spread across groups; several contacts belong to multiple groups.
+	3.	Clicking a contact displays full details (name, phone, email, gender, address, group badges) in the right panel.
+	4.	Toggling Favourite/Family/Friends/Classmates on the details view immediately updates:
+	◦	the contact’s state,
+	◦	the current filtered list.
+	5.	No text boxes—only buttons and click actions.
