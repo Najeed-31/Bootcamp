@@ -1,0 +1,21 @@
+<h2>Register</h2>
+
+<form (ngSubmit)="onSubmit()">
+  <label>Username: 
+    <input type="text" [(ngModel)]="username" name="username" required>
+  </label>
+  <br>
+
+  <label>Password: 
+    <input type="password" [(ngModel)]="password" name="password" required>
+  </label>
+  <br>
+
+  <button type="submit" [disabled]="auth.authLoading()">Register</button>
+</form>
+
+<button (click)="goToLogin()">Back to Login</button>
+
+<!-- Status messages -->
+<p style="color:red" *ngIf="auth.authError()">{{ auth.authError() }}</p>
+<p style="color:green" *ngIf="auth.isAuthenticated()">Registration successful!</p>

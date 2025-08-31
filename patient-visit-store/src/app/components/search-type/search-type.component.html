@@ -1,0 +1,49 @@
+<h2>Search Visits by Visit Type</h2>
+
+<form (ngSubmit)="onSearch()">
+  <label>Visit Type:
+    <select [(ngModel)]="visitType" name="visitType" required>
+      <option value="" disabled selected>Select type</option>
+      <option value="Consultation">Consultation</option>
+      <option value="Follow-up">Follow-up</option>
+      <option value="Emergency">Emergency</option>
+    </select>
+  </label>
+  <button type="submit" [disabled]="visitStore.isLoading()">Search</button>
+</form>
+
+<p *ngIf="visitStore.lastError()" style="color:red">
+  {{ visitStore.lastError() }}
+</p>
+
+<!-- Results Table -->
+<table *ngIf="visitStore.all().length > 0; else noResults" border="1" cellpadding="5">
+  <thead>
+    <tr>
+      <th>Visit ID</th>
+      <th>Patient</th>
+      <th>Doctor</th>
+      <th>Type</th>
+      <th>Date</th>
+      <th>Description</th>
+      <th>Duration (min)</th>
+      <th>Fee</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let v of visitStore.all()">
+      <td>{{ v.visitId }}</td>
+      <td>{{ v.patientName }}</td>
+      <td>{{ v.doctorName }}</td>
+      <td>{{ v.visitType }}</td>
+      <td>{{ v.visitDate | date:'short' }}</td>
+      <td>{{ v.description }}</td>
+      <td>{{ v.durationMinutes }}</td>
+      <td>{{ v.fee | currency }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noResults>
+  <p>No visits found.</p>
+</ng-template>

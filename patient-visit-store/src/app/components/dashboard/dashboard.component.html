@@ -1,0 +1,43 @@
+<h2>Welcome, {{ auth.getUser()?.username }}</h2>
+<p>Role: {{ auth.userRole() }}</p>
+
+<hr>
+
+<!-- Menu Options Based on Role -->
+<div *ngIf="auth.userRole() === 'Administrator'">
+  <h3>Administrator Menu</h3>
+  <button (click)="go('/add-visit')">Add Visit</button>
+  <button (click)="go('/update-visit')">Update Visit</button>
+  <button (click)="go('/delete-visit')">Delete Visit</button>
+  <button (click)="go('/search-patient')">Search by Patient</button>
+  <button (click)="go('/search-doctor')">Search by Doctor</button>
+  <button (click)="go('/search-type')">Search by Visit Type</button>
+</div>
+
+<div *ngIf="auth.userRole() === 'Receptionist'">
+  <h3>Receptionist Menu</h3>
+  <button (click)="go('/add-visit')">Add Visit</button>
+  <button (click)="go('/delete-visit')">Delete Visit</button>
+  <button (click)="go('/search-patient')">Search by Patient</button>
+  <button (click)="go('/search-doctor')">Search by Doctor</button>
+  <button (click)="go('/search-type')">Search by Visit Type</button>
+</div>
+
+<div *ngIf="auth.userRole() === 'Doctor'">
+  <h3>Doctor Menu</h3>
+  <button (click)="go('/update-visit')">Update Visit</button>
+  <button (click)="go('/search-patient')">Search by Patient</button>
+  <button (click)="go('/search-doctor')">Search by Doctor</button>
+  <button (click)="go('/search-type')">Search by Visit Type</button>
+</div>
+
+<div *ngIf="auth.userRole() === 'Guest'">
+  <h3>Guest Menu</h3>
+  <button (click)="go('/search-patient')">Search by Patient</button>
+  <button (click)="go('/search-doctor')">Search by Doctor</button>
+  <button (click)="go('/search-type')">Search by Visit Type</button>
+</div>
+
+<hr>
+
+<button (click)="logout()">Logout</button>

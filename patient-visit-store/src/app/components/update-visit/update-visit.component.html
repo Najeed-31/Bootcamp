@@ -1,0 +1,39 @@
+<h2>Update Visit</h2>
+
+<form (ngSubmit)="onSubmit()">
+  <label>Patient Name:
+    <input type="text" [(ngModel)]="patientName" name="patientName" required>
+  </label>
+  <br>
+
+  <label>Doctor Name:
+    <input type="text" [(ngModel)]="doctorName" name="doctorName" required>
+  </label>
+  <br>
+
+  <label>Visit Type:
+    <select [(ngModel)]="visitTypeName" name="visitTypeName" required>
+      <option value="" disabled selected>Select type</option>
+      <option value="Consultation">Consultation</option>
+      <option value="Follow-up">Follow-up</option>
+      <option value="Emergency">Emergency</option>
+    </select>
+  </label>
+  <br>
+
+  <label>Description:
+    <textarea [(ngModel)]="description" name="description"></textarea>
+  </label>
+  <br>
+
+  <label>Duration (minutes):
+    <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" min="1" required>
+  </label>
+  <br>
+
+  <button type="submit" [disabled]="visitStore.isLoading()">Update Visit</button>
+</form>
+
+<!-- Status messages -->
+<p style="color:red" *ngIf="visitStore.lastError()">{{ visitStore.lastError() }}</p>
+<p style="color:green" *ngIf="!visitStore.lastError() && !visitStore.isLoading()">Visit updated successfully!</p>
