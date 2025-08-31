@@ -1,0 +1,43 @@
+<h2>Dashboard</h2>
+<p>Welcome! Your role is: <b>{{ role() }}</b></p>
+
+<!-- ✅ Admin -->
+<div *ngIf="role() === 'Administrator'">
+  <h3>Admin Options</h3>
+  <button routerLink="/add-visit">Add Visit</button>
+  <button routerLink="/update-visit">Update Visit</button>
+  <button routerLink="/delete-visit">Delete Visit</button>
+  <button routerLink="/search-patient">Search by Patient</button>
+  <button routerLink="/search-doctor">Search by Doctor</button>
+  <button routerLink="/search-type">Search by Visit Type</button>
+</div>
+
+<!-- ✅ Receptionist -->
+<div *ngIf="role() === 'Receptionist'">
+  <h3>Receptionist Options</h3>
+  <button routerLink="/add-visit">Add Visit</button>
+  <button routerLink="/delete-visit">Delete Visit</button>
+  <button routerLink="/search-patient">Search by Patient</button>
+  <button routerLink="/search-doctor">Search by Doctor</button>
+  <button routerLink="/search-type">Search by Visit Type</button>
+</div>
+
+<!-- ✅ Doctor -->
+<div *ngIf="role() === 'Doctor'">
+  <h3>Doctor Options</h3>
+  <button routerLink="/update-visit">Update Visit</button>
+  <button routerLink="/search-patient">Search by Patient</button>
+  <button routerLink="/search-doctor">Search by Doctor</button>
+  <button routerLink="/search-type">Search by Visit Type</button>
+</div>
+
+<!-- ✅ Guest -->
+<div *ngIf="role() === 'Guest'">
+  <h3>Guest Options</h3>
+  <button routerLink="/search-patient">Search by Patient</button>
+  <button routerLink="/search-doctor">Search by Doctor</button>
+  <button routerLink="/search-type">Search by Visit Type</button>
+</div>
+
+<br>
+<button (click)="logout()">Logout</button>

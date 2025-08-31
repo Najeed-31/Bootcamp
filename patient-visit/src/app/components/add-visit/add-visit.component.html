@@ -1,0 +1,21 @@
+<h2>Add Visit</h2>
+
+<form (ngSubmit)="addVisit()">
+  <label>Patient Name: <input [(ngModel)]="patientName" name="patientName" required></label><br>
+  <label>Doctor Name: <input [(ngModel)]="doctorName" name="doctorName" required></label><br>
+  <label>Visit Type:
+    <select [(ngModel)]="visitTypeName" name="visitTypeName" required>
+      <option value="">Select</option>
+      <option value="Consultation">Consultation</option>
+      <option value="Follow-up">Follow-up</option>
+      <option value="Emergency">Emergency</option>
+    </select>
+  </label><br>
+  <label>Description: <input [(ngModel)]="description" name="description"></label><br>
+  <label>Duration (minutes): <input type="number" [(ngModel)]="durationMinutes" name="durationMinutes" required></label><br>
+
+  <button type="submit">Add Visit</button>
+</form>
+
+<p style="color:green;" *ngIf="message">{{ message }}</p>
+<p style="color:red;" *ngIf="error">{{ error }}</p>

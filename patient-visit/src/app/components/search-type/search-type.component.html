@@ -1,0 +1,40 @@
+<h2>Search Visits by Type</h2>
+
+<label for="visitType">Select Visit Type:</label>
+<select id="visitType" [(ngModel)]="visitType">
+  <option value="">-- Select --</option>
+  <option value="Consultation">Consultation</option>
+  <option value="Follow-up">Follow-up</option>
+  <option value="Emergency">Emergency</option>
+</select>
+
+<button (click)="search()">Search</button>
+
+<p style="color:red;" *ngIf="error">{{ error }}</p>
+
+<table *ngIf="visits.length > 0" border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Patient</th>
+      <th>Doctor</th>
+      <th>Visit Type</th>
+      <th>Visit Date</th>
+      <th>Description</th>
+      <th>Duration (min)</th>
+      <th>Fee</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let v of visits">
+      <td>{{ v.patientName }}</td>
+      <td>{{ v.doctorName }}</td>
+      <td>{{ v.visitType }}</td>
+      <td>{{ v.visitDate | date:'short' }}</td>
+      <td>{{ v.description }}</td>
+      <td>{{ v.durationMinutes }}</td>
+      <td>{{ v.fee | currency:'PKR':'symbol':'1.0-0' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p *ngIf="!visits.length && !error">No records found.</p>
